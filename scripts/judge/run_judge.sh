@@ -29,8 +29,11 @@ $PY scripts/judge/judge_pairwise.py --pairs "$WORK/results/dpo300_pairs.jsonl" \
   --out "$WORK/results/dpo300_judge.json" --backend api --votes 3
 
 echo "== 4/4 judge best-of-N =="
-SEL="$WORK/results/bon128_selected .jsonl"
-if [ -f "$SEL" ]; then
+SEL=${BON_SEL:-"$WORK/results/bon128_selected .jsonl"}
+if [ ! -f "$SEL" ]; then
+  SEL=$(find "$WORK" -name "bon128_selected*" 2>/dev/null | head -1 || true)
+fi
+if [ -n "$SEL" ] && [ -f "$SEL" ]; then
   $PY scripts/judge/judge_bon_pairs.py --selected "$SEL" --ns 64 128 \
     --out "$WORK/results/bon_pairs.jsonl"
   $PY scripts/judge/judge_pairwise.py --pairs "$WORK/results/bon_pairs.jsonl" \
