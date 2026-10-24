@@ -95,16 +95,18 @@ def main():
         n = args.n
         avg_at_n = sum(p["avg"] for p in problems) / len(problems)
         c_total = sum(sum(p["scores"]) for p in problems)
-        pass_all = sum(pass_at_k(n, int(sum(p["scores"])), n) for p in problems) / len(problems)
+        pass1 = sum(pass_at_k(n, int(sum(p["scores"])), 1) for p in problems) / len(problems)
+        k8 = min(8, n)
+        pass8 = sum(pass_at_k(n, int(sum(p["scores"])), k8) for p in problems) / len(problems)
         avg_len = sum(sum(p["lens"]) / len(p["lens"]) for p in problems) / len(problems)
         summary = {"seed": seed, "n": n, "avg@n": avg_at_n,
-                   "pass@n": pass_all, "avg_words": avg_len,
+                   "pass@1": pass1, f"pass@{k8}": pass8, "avg_words": avg_len,
                    "correct_fraction": c_total / (n * len(problems))}
         per_seed.append(summary)
         all_problems.append({"seed": seed, "problems": problems})
         print(json.dumps(summary, ensure_ascii=False), flush=True)
 
-    keys = ["avg@n", "pass@n", "avg_words", "correct_fraction"]
+    keys = ["avg@n", "pass@1", f"pass@{min(8, args.n)}", "avg_words", "correct_fraction"]
     agg = {k: {"mean": statistics.mean(s[k] for s in per_seed),
                "std": statistics.pstdev([s[k] for s in per_seed])} for k in keys}
     result = {"model": args.model, "data": args.data, "n": args.n,

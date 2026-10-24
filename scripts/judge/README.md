@@ -39,7 +39,7 @@ python scripts/judge/generate_pair_outputs.py \
 # DPO 300（如果有独立 adapter）
 python scripts/judge/generate_pair_outputs.py \
   --base_model $BASE \
-  --adapter $WORK/runs/dpo-300/final \
+  --adapter $WORK/runs/dpo-b005-300/final \
   --prompts_parquet $WORK/data/uf_rm/holdout.parquet \
   --n 200 --max_new_tokens 256 --temperature 0.7 --top_p 0.9 \
   --out $WORK/results/dpo300_pairs.jsonl --label_a base --label_b dpo300
