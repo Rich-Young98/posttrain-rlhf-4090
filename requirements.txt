@@ -1,0 +1,16 @@
+# Verified stack for AutoDL 4090 24G (see docs/D6_启动命令.md)
+torch==2.8.0
+vllm==0.11.0
+transformers==4.57.1
+tokenizers==0.22.1
+huggingface_hub==0.34.4
+datasets==3.6.0
+peft==0.17.1
+accelerate==1.10.1
+tensordict==0.10.0
+numpy==1.26.4
+pyarrow==21.0.0
+scipy==1.15.3
+math-verify
+openai
+bitsandbytes

@@ -1,0 +1,13 @@
+run_id,project,stage,model,data,steps,seed,aime24_avg,aime24_pass,aime25_avg,aime25_pass,math500_avg,math500_pass,train_acc,rewardbench,win_rate,len_delta_pct,proxy_mean,gold_mean,source,notes
+p1-base,项目一,base,Qwen2.5-Math-1.5B-Instruct,—,0,,7.50,10.00,9.17,20.00,72.15,82.00,,,,,,,实验日志 D2 / base_eval.json（远端）,avg@4/pass@4；AIME 4 采样
+p1-r1,项目一,GRPO,Qwen2.5-Math-1.5B-Instruct,DAPO-Math-5k,300,42,10.83,13.33,7.50,16.67,71.35,83.00,28.28,,,,,,d4_r1_300.log,lr=1e-5；KL 1.65e-4；5.94h
+p1-r1b,项目一,GRPO,Qwen2.5-Math-1.5B-Instruct,DAPO-Math-5k,300,42,5.00,10.00,10.00,20.00,71.65,83.40,27.99,,,,,,d4_r1b_lr2e5.log,lr=2e-5；KL 2.3e-4；5.55h
+p1-r1c,项目一,GRPO,Qwen2.5-Math-1.5B-Instruct,DAPO-Math-5k,600,42,,,,,,,29.43,,,,,,d4_r1c_600.log,未评测；9.37h
+p1-math-r1,项目一,GRPO,Qwen2.5-Math-1.5B-Instruct,MATH-7.4k,300,42,3.33,6.67,5.00,16.67,72.65,80.40,74.20,,,,,,p1_math_r1_300.log,train acc 高但 eval 不涨；4.27h
+p2-rm,项目二,RM,Qwen2.5-1.5B-Instruct + LoRA,"UltraFeedback 27,420",1875,42,,,,,,,,79.23,,,,,p2/p2_rm_full_analysis.log,RB 全量 2985；UF holdout 95.0；length-only 35.58
+p2-rm-proxy,项目二,RM(proxy),Qwen2.5-1.5B-Instruct + LoRA,UF A 半,,42,,,,,,,,79.00,,,,,p2/rm_proxy_eval.log,RB 500；best-of-N 的 proxy
+p2-rm-gold,项目二,RM(gold),Qwen2.5-1.5B-Instruct + LoRA,UF B 半,,42,,,,,,,,78.20,,,,,p2/rm_gold_eval.log,held-out，但同模型/同分布/同长度偏置
+p2-dpo300,项目二,DPO,Qwen2.5-1.5B-Instruct + LoRA,"UF 27,420",300,42,,,,,,,,,62.0,5.5,,,p2/p2_dpo_300_eval_100.log,RM proxy win；ties 18；similar 55.26；n=100
+p2-dpo800,项目二,DPO,Qwen2.5-1.5B-Instruct + LoRA,"UF 27,420",800,42,,,,,,,,,67.5,31.4,,,p2/dpo_eval_200.json,RM proxy win；ties 2；similar 61.06；人工 8/20 更差
+p2-bon64,项目二,best-of-N,Qwen2.5-1.5B-Instruct,UF holdout 200,64,42,,,,,,,,,,,1.4527,0.9420,p2/p2_bon_full.log,N=64；200 prompts；len 159.4
+p2-bon128,项目二,best-of-N,Qwen2.5-1.5B-Instruct,UF holdout 100,128,42,,,,,,,,,,,1.8084,1.2559,p2/bon_summary.json,N=128；N=64→128 gold +0.314；未过优化

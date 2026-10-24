@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+models/
+data/
+runs/
+results/
+logs/
+*.log
+*.safetensors
+*.bin
+*.pt
+*.pth
+bon_samples.jsonl
+bon_selected.jsonl
+bon128_selected*.jsonl
