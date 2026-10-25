@@ -1,6 +1,6 @@
 # 结果汇总（证据链）
 
-> 完整机器可读表：[run_index.csv](run_index.csv)；独立 judge 汇总：[judge_results.md](judge_results.md) / [judge_summary.csv](judge_summary.csv)；RFT：[rft_results.md](rft_results.md)。本页给面试前一页速览。
+> 完整机器可读表：[run_index.csv](run_index.csv)；项目一逐 run：[p1_results.md](p1_results.md)；独立 judge 汇总：[judge_results.md](judge_results.md) / [judge_summary.csv](judge_summary.csv)；RFT：[rft_results.md](rft_results.md)。本页给面试前一页速览。
 
 ## 项目一（RLVR / GRPO，Qwen2.5-Math-1.5B + LoRA）
 

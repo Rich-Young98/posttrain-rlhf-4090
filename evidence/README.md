@@ -8,6 +8,8 @@
 |---|---|---|
 | `run_index.csv` | 22 个 run 的指标（项目一 GRPO/RFT + 项目二 RM/DPO/BoN/judge） | 手工汇总自日志/JSON |
 | `results.md` | 一页结果（含 judge 与 RFT） | 汇总 |
+| `p1_results.md` | 项目一 GRPO 四组 + RFT 的总表、逐 run 读法、证据 | 父目录 P1 日志 |
+| `p1_curves/` | 项目一曲线（R1、R1 vs R1b、R1 家族、MATH-R1） | 父目录 `*_curve.png` |
 | `judge_results.md` | 独立 judge 方法、CI、长度桶、局限 | DeepSeek pairwise 运行汇总 |
 | `judge_summary.csv` | judge 逐组 `a/b/ties/win_rate/CI` | 同上 |
 | `rft_results.md` | RFT 的 MATH-500/AIME 对比（3 seed） | `rft-merged_*.json` |
@@ -28,5 +30,6 @@
 ## 缺失件（已声明，不伪造）
 
 - 原始逐 pair judge JSON（`dpo300_judge.json`、`dpo800_judge.json`、`bon_judge.json`）在 AutoDL 实例上，关机后未拉回；本目录保留逐组汇总。
-- 项目一原始 `*_eval.json` 仍在远端；repo 里是日志 + 汇总。
+- 项目一原始 `*_eval.json`、训练 launch 脚本、`prepare_math.py`/`prepare_v2.py` 仍在远端；repo 里是日志 + 汇总 + 按日志重建的 `scripts/p1/`。
+- 项目一 R1c 未评测（只有 train acc），不补数字。
 - 项目一 300 步 DPO 的人工复核未做（800 有完整 20 条）。
