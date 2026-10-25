@@ -16,7 +16,7 @@ echo "== 1/4 sample + filter =="
 $PY scripts/rft/sample_and_filter.py \
   --model "$BASE" --data "$DATA" --limit "$LIMIT" \
   --out "$WORK/data/rft_math/train.jsonl" \
-  --n "$N" --temperature 0.7 --top-p 0.95 --max-tokens 2048
+  --n "$N" --temperature 0.7 --top_p 0.95 --max-tokens 2048
 
 echo "== 2/4 LoRA SFT =="
 $PY scripts/rft/train_sft_lora.py \
