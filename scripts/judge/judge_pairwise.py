@@ -92,7 +92,7 @@ class APIPairJudge:
         self.max_tokens = max_tokens
 
     def judge(self, prompt: str, a: str, b: str) -> tuple[str, str]:
-        msg = [
+        messages = [
             {"role": "system", "content": JUDGE_SYSTEM},
             {"role": "user", "content": JUDGE_USER.format(prompt=prompt, a=a, b=b)},
         ]
@@ -100,26 +100,40 @@ class APIPairJudge:
             try:
                 resp = self.client.chat.completions.create(
                     model=self.model,
-                    messages=msg,
+                    messages=messages,
                     temperature=self.temperature,
                     max_tokens=self.max_tokens,
                 )
                 text = resp.choices[0].message.content or ""
                 return _norm_winner(text), text.strip()[:500]
             except Exception as e:  # noqa: BLE001
-                msg = str(e)
-                low = msg.lower()
-                if any(x in low for x in ["401", "403", "authentication", "invalid api key",
-                                          "unauthorized", "invalid_api_key"]):
+                err = str(e)
+                low = err.lower()
+                # DeepSeek: 402 Insufficient Balance — retrying will not help.
+                if "402" in low or "insufficient balance" in low:
+                    raise SystemExit(
+                        "Judge API call failed: 402 Insufficient Balance.\n"
+                        "Recharge at https://platform.deepseek.com (¥10 is enough), "
+                        "or run with --backend local.\n"
+                        f"Raw error: {err[:400]}"
+                    )
+                if any(x in low for x in ["401", "403", "authentication",
+                                          "invalid api key", "unauthorized"]):
                     raise SystemExit(
                         "Judge API auth failed (401/403).\n"
-                        f"Error: {msg[:400]}\n"
-                        "Check: JUDGE_API_KEY / JUDGE_BASE_URL / JUDGE_MODEL.\n"
+                        f"Raw error: {err[:400]}\n"
+                        "Check JUDGE_API_KEY / JUDGE_BASE_URL / JUDGE_MODEL.\n"
                         "DeepSeek: base=https://api.deepseek.com/v1 model=deepseek-chat\n"
                         "OpenAI:   base=https://api.openai.com/v1   model=gpt-4o-mini"
                     )
+                if "422" in low:
+                    raise SystemExit(
+                        "Judge API 422 (bad request). If messages was a string, "
+                        "the client is misconfigured.\n"
+                        f"Raw error: {err[:400]}"
+                    )
                 if attempt == 2:
-                    return "error", f"ERROR: {msg}"
+                    return "error", f"ERROR: {err}"
                 time.sleep(2 ** attempt)
         return "error", "ERROR"
 
