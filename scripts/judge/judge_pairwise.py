@@ -107,10 +107,21 @@ class APIPairJudge:
                 text = resp.choices[0].message.content or ""
                 return _norm_winner(text), text.strip()[:500]
             except Exception as e:  # noqa: BLE001
+                msg = str(e)
+                low = msg.lower()
+                if any(x in low for x in ["401", "403", "authentication", "invalid api key",
+                                          "unauthorized", "invalid_api_key"]):
+                    raise SystemExit(
+                        "Judge API auth failed (401/403).\n"
+                        f"Error: {msg[:400]}\n"
+                        "Check: JUDGE_API_KEY / JUDGE_BASE_URL / JUDGE_MODEL.\n"
+                        "DeepSeek: base=https://api.deepseek.com/v1 model=deepseek-chat\n"
+                        "OpenAI:   base=https://api.openai.com/v1   model=gpt-4o-mini"
+                    )
                 if attempt == 2:
-                    return "tie", f"ERROR: {e}"
+                    return "error", f"ERROR: {msg}"
                 time.sleep(2 ** attempt)
-        return "tie", "ERROR"
+        return "error", "ERROR"
 
 
 class LocalPairJudge:
@@ -180,25 +191,32 @@ def judge_one(judge, prompt: str, a: str, b: str, votes: int, seed: int) -> dict
             swap = rng.random() < 0.5
         if swap:
             w, reason = judge.judge(prompt, b, a)
-            w = {"A": "B", "B": "A", "tie": "tie"}[w]
+            w = {"A": "B", "B": "A", "tie": "tie", "error": "error"}[w]
         else:
             w, reason = judge.judge(prompt, a, b)
+        if w not in ("A", "B", "tie", "error"):
+            w = "error"
         raw.append({"order": "BA" if swap else "AB", "winner_original": w,
                     "reason": reason})
     cnt = Counter(x["winner_original"] for x in raw)
-    top = cnt.most_common()
-    if top and (len(top) == 1 or top[0][1] > top[1][1]):
-        final = top[0][0]
+    if cnt.get("error", 0) == len(raw):
+        final = "error"
     else:
-        final = "tie"
+        top = [(k, v) for k, v in cnt.most_common() if k != "error"]
+        if top and (len(top) == 1 or top[0][1] > (top[1][1] if len(top) > 1 else 0)):
+            final = top[0][0]
+        else:
+            final = "tie"
     return {"votes": raw, "final_winner": final, "vote_counts": dict(cnt)}
 
 
 def summarize(records: list[dict], label_a: str, label_b: str) -> dict:
     n = len(records)
+    errors = sum(r["final_winner"] == "error" for r in records)
+    valid = n - errors
     wins_b = sum(r["final_winner"] == "B" for r in records)
     wins_a = sum(r["final_winner"] == "A" for r in records)
-    ties = n - wins_a - wins_b
+    ties = valid - wins_a - wins_b
     bins = {"a_longer": [0, 0], "similar": [0, 0], "b_longer": [0, 0]}  # [n, wins_b]
     lens_a, lens_b = [], []
     for r in records:
@@ -213,13 +231,15 @@ def summarize(records: list[dict], label_a: str, label_b: str) -> dict:
         return round(x, 4) if x == x else None
     return {
         "n": n,
+        "valid": valid,
+        "errors": errors,
         "label_a": label_a,
         "label_b": label_b,
         "wins_a": wins_a,
         "wins_b": wins_b,
         "ties": ties,
         f"win_rate_{label_b}_excl_ties": rate(wins_b / max(wins_b + wins_a, 1)),
-        f"win_rate_{label_b}_incl_ties": rate((wins_b + 0.5 * ties) / max(n, 1)),
+        f"win_rate_{label_b}_incl_ties": rate((wins_b + 0.5 * ties) / max(valid, 1)),
         "avg_words_a": rate(sum(lens_a) / max(n, 1)),
         "avg_words_b": rate(sum(lens_b) / max(n, 1)),
         "avg_word_diff_b_minus_a": rate((sum(lens_b) - sum(lens_a)) / max(n, 1)),
@@ -273,6 +293,8 @@ def main():
         json.dump({"summary": summary, "pairs": records}, f, ensure_ascii=False, indent=1)
     print(json.dumps(summary, ensure_ascii=False, indent=1), flush=True)
     print(f"[done] -> {args.out}", flush=True)
+    if summary["errors"] == summary["n"]:
+        raise SystemExit("ALL judge votes failed; do not use this file. See reasons above.")
 
 
 if __name__ == "__main__":

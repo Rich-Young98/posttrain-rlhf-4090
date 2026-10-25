@@ -103,3 +103,47 @@ python scripts/judge/judge_pairwise.py \
 
 - 200 对 × 3 票 ≈ 600 次 API 调用；DeepSeek 约 ¥5–15；gpt-4o-mini 约 $1–3。
 - 本地 7B：2–4 GPU·h（生成+judge）。
+
+## 9. 如果 judge 全是 tie（先看 reason）
+
+2026-10-25 遇到过：200/200 tie，打开 `pairs[0].votes[].reason` 发现是
+`ERROR: Error code: 401 - Authentication Fails ...`。
+**这不是 judge 认为打平，是 API key 无效。** 脚本现在会在 401/403 时直接退出，
+不会再写一份"全 tie"的假结果。
+
+排查：
+
+```bash
+echo "${JUDGE_API_KEY:0:8}"                 # 确认不是空/占位符
+curl -s https://api.deepseek.com/v1/models \
+  -H "Authorization: Bearer $JUDGE_API_KEY" | head
+```
+
+- DeepSeek：`JUDGE_BASE_URL=https://api.deepseek.com/v1`、`JUDGE_MODEL=deepseek-chat`；
+- OpenAI：`JUDGE_BASE_URL=https://api.openai.com/v1`、`JUDGE_MODEL=gpt-4o-mini`；
+- 不要把 OpenAI key 配 DeepSeek base，反之亦然。
+
+如果暂时没有可用 key，用本地 7B：
+
+```bash
+python scripts/judge/judge_pairwise.py \
+  --pairs "$WORK/results/dpo300_pairs.jsonl" \
+  --out "$WORK/results/dpo300_judge_local.json" \
+  --backend local --model Qwen/Qwen2.5-7B-Instruct --load-4bit --votes 2
+```
+
+如果 `*_pairs.jsonl` 没有保留，从旧的 judge json 恢复：
+
+```bash
+python scripts/judge/extract_pairs.py \
+  --judge_json p2/dpo300_judge.json \
+  --out "$WORK/results/dpo300_pairs.jsonl"
+```
+
+## 10. best-of-N 文件找不到
+
+```bash
+find /root/autodl-tmp/work -iname "*bon128*selected*"
+# 找到后：
+BON_SEL="/path/to/bon128_selected .jsonl" bash scripts/judge/run_judge_bon.sh
+```
