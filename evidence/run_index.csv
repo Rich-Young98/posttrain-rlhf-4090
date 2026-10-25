@@ -11,3 +11,7 @@ p2-dpo300,项目二,DPO,Qwen2.5-1.5B-Instruct + LoRA,"UF 27,420",300,42,,,,,,,,,
 p2-dpo800,项目二,DPO,Qwen2.5-1.5B-Instruct + LoRA,"UF 27,420",800,42,,,,,,,,,67.5,31.4,,,p2/dpo_eval_200.json,RM proxy win；ties 2；similar 61.06；人工 8/20 更差
 p2-bon64,项目二,best-of-N,Qwen2.5-1.5B-Instruct,UF holdout 200,64,42,,,,,,,,,,,1.4527,0.9420,p2/p2_bon_full.log,N=64；200 prompts；len 159.4
 p2-bon128,项目二,best-of-N,Qwen2.5-1.5B-Instruct,UF holdout 100,128,42,,,,,,,,,,,1.8084,1.2559,p2/bon_summary.json,N=128；N=64→128 gold +0.314；未过优化
+p2-dpo300-judge,项目二,judge-indep,Qwen2.5-1.5B-Instruct + DPO LoRA,UF holdout 200,300,42,,,,,,,,,52.9,5.5,,,p2/dpo300_judge.json,DeepSeek pairwise; ties 62; CI 44.6-61.0; similar 51.85; b_longer 45.95
+p2-dpo800-judge,项目二,judge-indep,Qwen2.5-1.5B-Instruct + DPO LoRA,UF holdout 200,800,42,,,,,,,,,40.9,31.4,,,p2/dpo800_judge.json,DeepSeek pairwise; ties 29; CI 33.8-48.4; similar 48.61; b_longer 32.18
+p2-bon64-judge,项目二,judge-indep,Qwen2.5-1.5B-Instruct,UF holdout 100,64,42,,,,,,,,,65.48,,,,p2/bon_judge.json,N=64 vs N=1; n=89; CI 54.8-74.8; similar 66.04
+p2-bon128-judge,项目二,judge-indep,Qwen2.5-1.5B-Instruct,UF holdout 100,128,42,,,,,,,,,66.67,,,,p2/bon_judge.json,N=128 vs N=1; n=89; CI 55.6-76.1; similar 65.96

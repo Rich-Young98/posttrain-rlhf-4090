@@ -64,3 +64,11 @@
 - [ ] RFT vs GRPO：MATH-500 +2pp 或负结果边界
 - [ ] 3 seed / CI（至少评测层）
 - [ ] 项目一 `*_eval.json` 原始文件
+
+## 独立 judge（2026-10-25 更新）
+
+- DPO300：52.9%（CI 44.6–61.0），平手；similar 51.85%。
+- DPO800：40.9%（CI 33.8–48.4），显著差于 base；RM proxy 67.5% 高估 26.6pp；DPO 更长时只赢 32.2%。
+- BoN N=64/N=128：65.5%/66.7%（CI 54.8–74.8 / 55.6–76.1），similar 66.0%；N=128 未下降，N≤128 无过优化。
+
+> 详见 [judge_results.md](judge_results.md)。
