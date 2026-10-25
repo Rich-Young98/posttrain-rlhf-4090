@@ -1,6 +1,6 @@
 # 项目一结果：单卡 GRPO + RFT（受控负结果）
 
-> 一键汇总：[results.md](results.md)；run 级 CSV：[run_index.csv](run_index.csv)；面试口径：[../docs/项目一_结果与面试口径.md](../docs/项目一_结果与面试口径.md)。
+> 一键汇总：[results.md](results.md)；run 级 CSV：[run_index.csv](run_index.csv)；面试口径：[../docs/项目一_结果与面试口径.md](../docs/项目一_结果与面试口径.md)；完整报告在父目录 `项目一_最终报告.md`。
 > 原始日志在父目录（`d4_r1_300.log` 等）；本页是面试前一页速览 + 证据索引。
 
 ## 1. 训练配置（共同项）
