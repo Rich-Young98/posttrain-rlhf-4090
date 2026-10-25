@@ -1,0 +1,32 @@
+{
+  "n": 200,
+  "judge": "RM proxy (UltraFeedback-trained, length-biased; not independent)",
+  "adapter": "/root/autodl-tmp/work/runs/dpo-b005/final",
+  "rm_adapter": "/root/autodl-tmp/work/runs/rm-lora/final",
+  "max_new_tokens": 256,
+  "temperature": 0.7,
+  "top_p": 0.9,
+  "base_len_mean": 155.05,
+  "dpo_len_mean": 203.75,
+  "len_diff_mean": 48.7,
+  "rm_win_rate": 0.675,
+  "rm_ties": 2,
+  "rm_gap_mean": 1.4506,
+  "length_bins": {
+    "dpo_shorter": {
+      "n": 5,
+      "rm_win_rate": 1.0,
+      "mean_len_diff": -31.0
+    },
+    "similar": {
+      "n": 104,
+      "rm_win_rate": 0.6106,
+      "mean_len_diff": 0.1
+    },
+    "dpo_longer": {
+      "n": 91,
+      "rm_win_rate": 0.7308,
+      "mean_len_diff": 108.6
+    }
+  }
+}

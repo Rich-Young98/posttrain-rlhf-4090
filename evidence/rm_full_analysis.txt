@@ -1,0 +1,101 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+Some weights of Qwen2ForSequenceClassification were not initialized from the model checkpoint at /root/autodl-tmp/models/Qwen2.5-1.5B-Instruct and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+[model] /root/autodl-tmp/work/runs/rm-lora/final
+[data] 2985
+[score] 8/2985
+[score] 168/2985
+[score] 328/2985
+[score] 488/2985
+[score] 648/2985
+[score] 808/2985
+[score] 968/2985
+[score] 1128/2985
+[score] 1288/2985
+[score] 1448/2985
+[score] 1608/2985
+[score] 1768/2985
+[score] 1928/2985
+[score] 2088/2985
+[score] 2248/2985
+[score] 2408/2985
+[score] 2568/2985
+[score] 2728/2985
+[score] 2888/2985
+[overall] {"rm_acc": 0.7923, "length_only_acc": 0.3558, "mean_len_diff": -39.4, "mean_score_gap": 2.6944}
+[corr] pearson 0.4325 spearman 0.3964
+[length_bins] {
+  "chosen_much_shorter": {
+    "n": 454,
+    "rm_acc": 0.5661,
+    "length_only_acc": 0.0,
+    "mean_len_diff": -380.1,
+    "mean_score_gap": 0.0589
+  },
+  "chosen_shorter": {
+    "n": 512,
+    "rm_acc": 0.6445,
+    "length_only_acc": 0.0,
+    "mean_len_diff": -116.0,
+    "mean_score_gap": 1.2276
+  },
+  "similar": {
+    "n": 1494,
+    "rm_acc": 0.8501,
+    "length_only_acc": 0.3594,
+    "mean_len_diff": 0.5,
+    "mean_score_gap": 1.9986
+  },
+  "chosen_longer": {
+    "n": 294,
+    "rm_acc": 0.949,
+    "length_only_acc": 1.0,
+    "mean_len_diff": 108.7,
+    "mean_score_gap": 6.3949
+  },
+  "chosen_much_longer": {
+    "n": 231,
+    "rm_acc": 0.9913,
+    "length_only_acc": 1.0,
+    "mean_len_diff": 353.5,
+    "mean_score_gap": 10.9154
+  }
+}
+[groups] {
+  "same_model": {
+    "n": 1301,
+    "rm_acc": 0.8386,
+    "length_only_acc": 0.3036,
+    "mean_len_diff": -11.9,
+    "mean_score_gap": 1.5294
+  },
+  "different_model": {
+    "n": 1684,
+    "rm_acc": 0.7565,
+    "length_only_acc": 0.3961,
+    "mean_len_diff": -60.6,
+    "mean_score_gap": 3.5944
+  },
+  "human_human": {
+    "n": 1030,
+    "rm_acc": 0.8835,
+    "length_only_acc": 0.3049,
+    "mean_len_diff": -2.6,
+    "mean_score_gap": 1.5895
+  },
+  "gpt4_chosen": {
+    "n": 367,
+    "rm_acc": 0.6785,
+    "length_only_acc": 0.5341,
+    "mean_len_diff": 58.4,
+    "mean_score_gap": 4.9224
+  },
+  "length_matched_20": {
+    "n": 1196,
+    "rm_acc": 0.8763,
+    "length_only_acc": 0.3161,
+    "mean_len_diff": 0.2,
+    "mean_score_gap": 1.8327
+  }
+}
+[done] -> /root/autodl-tmp/work/results/rm_full_analysis.json

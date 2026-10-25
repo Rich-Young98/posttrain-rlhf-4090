@@ -1,0 +1,77 @@
+{
+  "n_prompts": 100,
+  "n_samples": 128,
+  "ns": [
+    1,
+    2,
+    4,
+    8,
+    16,
+    32,
+    64,
+    128
+  ],
+  "max_new_tokens": 256,
+  "temperature": 0.7,
+  "top_p": 0.9,
+  "proxy_adapter": "/root/autodl-tmp/work/runs/rm-proxy/final",
+  "gold_adapter": "/root/autodl-tmp/work/runs/rm-gold/final",
+  "curve": [
+    {
+      "N": 1,
+      "n": 100,
+      "proxy_mean": -1.9434,
+      "gold_mean": -2.2761,
+      "len_mean": 143.6
+    },
+    {
+      "N": 2,
+      "n": 100,
+      "proxy_mean": -0.955,
+      "gold_mean": -1.3356,
+      "len_mean": 145.8
+    },
+    {
+      "N": 4,
+      "n": 100,
+      "proxy_mean": -0.3618,
+      "gold_mean": -0.884,
+      "len_mean": 145.7
+    },
+    {
+      "N": 8,
+      "n": 100,
+      "proxy_mean": 0.3785,
+      "gold_mean": -0.1413,
+      "len_mean": 153.0
+    },
+    {
+      "N": 16,
+      "n": 100,
+      "proxy_mean": 0.8162,
+      "gold_mean": 0.2094,
+      "len_mean": 156.1
+    },
+    {
+      "N": 32,
+      "n": 100,
+      "proxy_mean": 1.1389,
+      "gold_mean": 0.6352,
+      "len_mean": 157.2
+    },
+    {
+      "N": 64,
+      "n": 100,
+      "proxy_mean": 1.4527,
+      "gold_mean": 0.942,
+      "len_mean": 159.4
+    },
+    {
+      "N": 128,
+      "n": 100,
+      "proxy_mean": 1.8084,
+      "gold_mean": 1.2559,
+      "len_mean": 161.9
+    }
+  ]
+}

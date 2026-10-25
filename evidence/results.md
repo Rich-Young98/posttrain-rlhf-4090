@@ -1,6 +1,6 @@
 # 结果汇总（证据链）
 
-> 完整机器可读表：[run_index.csv](run_index.csv)。本页给面试前一页速览。
+> 完整机器可读表：[run_index.csv](run_index.csv)；独立 judge 汇总：[judge_results.md](judge_results.md) / [judge_summary.csv](judge_summary.csv)；RFT：[rft_results.md](rft_results.md)。本页给面试前一页速览。
 
 ## 项目一（RLVR / GRPO，Qwen2.5-Math-1.5B + LoRA）
 
@@ -17,6 +17,19 @@
 - R1 的 AIME24 看似 +3.3pp，但 AIME25 -1.7pp、MATH-500 -0.8pp，R1b 直接掉到 5%；没有一致提升。
 - MATH-R1 把 train acc 从 30% 拉到 74%，但 eval 不涨、AIME 掉约 4pp。
 - 结论：1.5B + LoRA + 300–600 步的学习信号/预算不足；这是受控负结果，不是"调参没调对"。
+
+## 项目一补充：RFT / expert iteration（负结果）
+
+> 详情 [rft_results.md](rft_results.md)。MATH 7.4k 采样 8 条、过滤保留 5,062（68.3%）、最短正确回答 SFT 1 epoch。
+
+| 指标 | base | RFT | Δ |
+|---|---:|---:|---:|
+| MATH-500 avg@4 | 58.08% | 57.98% | **-0.10pp** |
+| MATH-500 pass@4 | 66.47% | 65.47% | **-1.00pp** |
+| AIME24 avg@8 | 9.49% | 9.77% | **+0.28pp** |
+| AIME25 avg@8 | 9.17% | 7.64% | **-1.53pp** |
+
+**读法**：变化都在 seed/题目噪声内，RFT 没有可测提升。与 GRPO 合起来：**on-policy 和 offline 都不是瓶颈，容量/数据/预算才是。**
 
 ## 项目二（RLHF / RM + DPO + best-of-N）
 
@@ -35,17 +48,20 @@
 
 **读法**：不是纯长度（length-only 35.6%，长度匹配 87.6%），但有强长度先验；79.2% 里有一部分是长度红利。
 
-### DPO
+### DPO（RM proxy vs 独立 judge）
 
 | 指标 | DPO 300 | DPO 800 |
 |---|---:|---:|
 | RM proxy win | 62.0% | **67.5%** |
+| 独立 judge win | **52.9%** | **40.9%** |
+| 95% CI | 44.6–61.0% | 33.8–48.4% |
+| ties | 62 | 29 |
+| similar 桶（judge） | 51.85% | 48.61% |
+| DPO 更长时（judge） | 45.95% | **32.18%** |
 | 平均长度 | +5.5% | **+31.4%** |
-| similar 桶 | 55.26% | 61.06% |
-| ties | 18 | 2 |
 | 人工 20 条 | 未做 | 4–5 更好 / **8 更差** / 8 差不多 |
 
-**读法**：800 步 margin 为正，但 chosen/rejected 的绝对 logprob 都降（-17/-40），是 likelihood displacement；生成上出现"更长、更自信、更少拒答"和 API/事实幻觉。mixed/负结果。
+**读法**：DPO300 与 base 平手；DPO800 **显著更差**。RM proxy 高估 **26.6pp**，是长度/风格 shortcut。DPO 是负结果，不是"对齐成功"。
 
 ### best-of-N
 
@@ -56,19 +72,18 @@
 | 64 | +1.453 | +0.942 | 159.4 |
 | 128 | **+1.808** | **+1.256** | **161.9** |
 
-**读法**：N=1..128 proxy/gold 同向上升，长度 +12.7%，长度相同 pair 的 gold 仍 +2.97；**未观察到经典过优化拐点**。但 gold RM 与 proxy 同模型/同分布/同长度偏置，不能当独立 judge —— 见 P0 judge。
+**读法**：N=1..128 proxy/gold 同向上升，长度 +12.7%，长度相同 pair 的 gold 仍 +2.97；**未观察到经典过优化拐点**（negative result）。但同一批选中回答在独立 judge 下 **N=64 65.5%、N=128 66.7%**，similar 桶约 66%——**“选择”本身是正结果**。held-out gold RM 与 proxy 同偏置，不能当独立 judge。
 
-## 待补（P0/P1）
+## 一句话
 
-- [ ] 独立 judge：DPO 300/800、BoN 64/128（API 或 7B）
-- [ ] RFT vs GRPO：MATH-500 +2pp 或负结果边界
-- [ ] 3 seed / CI（至少评测层）
-- [ ] 项目一 `*_eval.json` 原始文件
+> 同一套 1.5B/24G 预算：项目一 GRPO + RFT 都是受控负结果；项目二 RM 有长度偏置、DPO 被独立 judge 证伪（40.9%）、best-of-N 选择有效（65.5/66.7%）。**选择 vs 优化，是两种不同的 reward-hacking 风险。**
 
-## 独立 judge（2026-10-25 更新）
+## 证据索引
 
-- DPO300：52.9%（CI 44.6–61.0），平手；similar 51.85%。
-- DPO800：40.9%（CI 33.8–48.4），显著差于 base；RM proxy 67.5% 高估 26.6pp；DPO 更长时只赢 32.2%。
-- BoN N=64/N=128：65.5%/66.7%（CI 54.8–74.8 / 55.6–76.1），similar 66.0%；N=128 未下降，N≤128 无过优化。
-
-> 详见 [judge_results.md](judge_results.md)。
+- 每个 run 的数字 → [run_index.csv](run_index.csv)
+- judge 方法/CI/长度桶 → [judge_results.md](judge_results.md)
+- RFT → [rft_results.md](rft_results.md)
+- DPO 生成评测原始汇总 → [dpo_eval_200.json](dpo_eval_200.json)
+- best-of-N 曲线原始汇总 → [bon_summary.json](bon_summary.json)
+- 人工复核 20 条 → [dpo_manual_review_20.md](dpo_manual_review_20.md)
+- RM 全量分析原始输出 → [rm_full_analysis.txt](rm_full_analysis.txt)

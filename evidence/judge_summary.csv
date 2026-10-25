@@ -1,0 +1,11 @@
+experiment,label_a,label_b,group,n,a,b,ties,win_rate_b_excl_ties,ci95_low,ci95_high,similar_win_rate_b,source,notes
+dpo300,base,dpo300,overall,200,65,73,62,52.90,44.60,61.04,51.85,DeepSeek pairwise,A/B 交换 + 3 票；ties 不计入分母
+dpo300,base,dpo300,similar,133,39,42,52,51.85,,,,DeepSeek pairwise,长度差 ±50
+dpo300,base,dpo300,b_longer,46,20,17,9,45.95,,,,DeepSeek pairwise,DPO 更长
+dpo300,base,dpo300,a_longer,21,6,14,1,70.00,,,,DeepSeek pairwise,base 更长
+dpo800,base,dpo800,overall,200,101,70,29,40.94,33.84,48.43,48.61,DeepSeek pairwise,A/B 交换 + 3 票；ties 不计入分母
+dpo800,base,dpo800,similar,82,37,35,10,48.61,,,,DeepSeek pairwise,长度差 ±50
+dpo800,base,dpo800,b_longer,105,59,28,18,32.18,,,,DeepSeek pairwise,DPO 更长
+dpo800,base,dpo800,a_longer,13,5,7,1,58.33,,,,DeepSeek pairwise,base 更长
+bon64,n1,bon64,overall,89,29,55,5,65.48,54.83,74.77,66.04,DeepSeek pairwise,N=1 vs N=64 选中回答
+bon128,n1,bon128,overall,89,26,52,11,66.67,55.64,76.13,65.96,DeepSeek pairwise,N=1 vs N=128 选中回答

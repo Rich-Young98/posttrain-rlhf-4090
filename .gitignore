@@ -14,3 +14,5 @@ logs/
 bon_samples.jsonl
 bon_selected.jsonl
 bon128_selected*.jsonl
+
+.DS_Store
