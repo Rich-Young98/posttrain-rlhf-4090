@@ -19,3 +19,5 @@ p1-base-math500-v2,项目一,eval-base,Qwen2.5-Math-1.5B-Instruct,MATH-500,0,42,
 p1-rft-math500,项目一,RFT,RFT-merged (LoRA),MATH-500,317,42,,,,,57.98,65.47,,,,,,,repo/evidence/rft_results.md,RFT 1 epoch; 5062/7414 kept; Δ -0.10pp
 p1-base-aime24-v2,项目一,eval-base,Qwen2.5-Math-1.5B-Instruct,AIME24,0,42,9.49,19.63,,,,,,,,,,,repo/evidence/rft_results.md,avg@8/pass@8; 3 seeds
 p1-rft-aime24,项目一,RFT,RFT-merged (LoRA),AIME24,317,42,9.77,19.26,,,,,,,,,,,repo/evidence/rft_results.md,avg@8/pass@8; Δ +0.28pp
+p1-base-aime25-v2,项目一,eval-base,Qwen2.5-Math-1.5B-Instruct,AIME25,0,42,,,9.17,23.33,,,,,,,,,repo/evidence/rft_results.md,avg@8/pass@8; 3 seeds
+p1-rft-aime25,项目一,RFT,RFT-merged (LoRA),AIME25,317,42,,,7.64,24.44,,,,,,,,,repo/evidence/rft_results.md,"avg@8/pass@8; Δ avg -1.53pp, pass@8 +1.11pp"
