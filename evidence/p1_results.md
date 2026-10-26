@@ -10,7 +10,7 @@
 | 模型 | Qwen2.5-Math-1.5B-Instruct + LoRA（r=32，alpha=32，all-linear） |
 | 框架 | verl v0.8.0 + vLLM 0.11.0 colocate + FSDP，单卡 4090 24G |
 | GRPO | `adv_estimator=grpo`，`rollout.n=8`，`train_batch_size=4`，KL loss 0.001，`token-mean` |
-| 长度 | prompt 1024 / response 3072，`gpu_memory_utilization=0.45`，seed 42 |
+| 长度 | prompt 1024 / response 3072，`gpu_memory_utilization=0.45`；**单次训练：`data.seed=None`（数据顺序未显式 seed），42 只是 `actor.data_loader_seed`/`fsdp_config.seed` 默认值** |
 | 评测 | AIME24/25 `avg@4 / pass@4`；MATH-500 `avg@4 / pass@4`；训练集 reward 即 train acc（DAPO 为 ±1，需换算；MATH 为 0/1） |
 
 ## 2. 主表
@@ -58,15 +58,17 @@
 - 训练：LoRA SFT 1 epoch，317 步，loss 0.046，19.5min；
 - 评测：`eval_math.py`，3 个采样 seed，报 mean±std；
 - 结果：MATH-500 avg@4 **58.08 → 57.98**（−0.10pp）、pass@4 66.47 → 65.47；AIME24 avg@8 9.49 → 9.77（+0.28）；AIME25 9.17 → 7.64（−1.53）；
-- 结论：离线自蒸馏只在拟合已会做的题，没有新增学习信号；与 GRPO 合起来，**on-policy/off-policy 都不是瓶颈**。
+- 结论：离线自蒸馏只在拟合已会做的题，没有新增学习信号；与 GRPO 合起来，**两条尝试都没有显示稳定提升，但不足以排除算法类别**。
 
 > 注意：RFT 的 MATH-500 base 58.08 用的是新协议（`eval_math.py`，n=4，3 seed），项目一老 base 72.15 用的是 `d2_tools.py` 协议，**两个数不能横比**。
+> 补充（2026-10-26）：新协议 **AIME24 实际是 90 题（AIME 2022–2024，`AI-MO/aimo-validation-aime`）**，旧协议 AIME24 是 2024-only 30 题 —— `9.49/9.77` 与 `7.50/10.83` 不可横比；在 2024-only 30 题子集上，重算是 base avg@8 **10.83** / RFT **11.67**（仍在新协议内、仍在 seed 波动内）。
+> 另：`r1_300_eval.json` 是错误 merge 产物（与 base 逐题 responses 完全相同），R1 有效评测只有 `r1_300_eval_hf.json`。
 
 ## 4. 结论
 
 1. **没有一致提升**：R1 的 AIME24 是单点噪声；R1b/R1c/MATH-R1 都不支持“继续调 lr/步数/数据能涨”。
 2. **两个受控负结果**：在线 GRPO 与离线 RFT 都没有可测收益。
-3. **瓶颈判断**：1.5B + LoRA + 24G + 300–600 步下，更可能是容量/数据/预算，而不是 lr、步数或 on/off-policy。
+3. **不能确定主因**：1.5B + LoRA + 24G + 300–600 步下，容量、数据分布、reward 定义、有效 rollout 数、训练预算都是**待验证假设**；现有实验（单次训练、R1c 未评测、两种评测协议）无法识别唯一瓶颈。可以说的是"lr/步数不是解"，不能反推"容量/数据才是原因"。
 4. **工程产出**：单卡 24G 的 GRPO 闭环、数据去重/去污染、reward 路由、LoRA 合并、评测噪声控制。
 
 ## 5. 证据
@@ -80,12 +82,14 @@
 | 启动脚本 | [../scripts/p1/](../scripts/p1/)（按日志重建） |
 | RFT 代码 | [../scripts/rft/](../scripts/rft/) |
 | 评测器 | [../scripts/eval/eval_math.py](../scripts/eval/eval_math.py) |
-| 原始 eval JSON | 仍在 AutoDL `results/`（`base_eval.json`、`r1_300_eval_hf.json`、`r1b_300_eval.json`、`math_r1_300_eval.json`），未入库 |
+| 原始 eval JSON | 已从 AutoDL 拉回父目录 `p1/artifacts/raw_eval/`（`base_eval.json`、`r1_300_eval_hf.json`、`r1b_300_eval.json`、`math_r1_300_eval.json` + RFT 三份），sha256 见 `p1/evidence/artifact_inventory.csv` |
+| Day 1 协议/资产盘点 | 父目录 `p1/evidence/protocol_matrix.md`、`config_matrix.md`、`run_index.csv`、`artifact_inventory.csv` |
 
 ## 6. 限制（主动说）
 
-- 单 seed 训练；评测 AIME 的 n=4/8，30 题噪声大；
-- R1c 未评测（只有 train acc），不补数字；
-- 原始训练 launch 脚本/数据准备脚本在 AutoDL，未入库；repo 是重建版；
-- MATH-500 两套评测协议（72.15 vs 58.08），不横比；
+- **单次训练，数据顺序未显式 seed**（`data.seed=None`；`trainer.seed` 在 verl v0.8 不存在）；评测 AIME 的 n=4/8，30 题噪声大；
+- **R1c 未评测且产物缺失**（无 adapter/checkpoint，只有日志），不补数字；
+- 原始训练 launch 脚本/数据准备脚本在 AutoDL，未入库；repo 是重建版（`run_grpo.sh` 有 3 个字段与实跑不一致：`use_shm`/`load_format`/`layered_summon`）；
+- MATH-500 两套评测协议（72.15 vs 58.08），题集相同但模板/解码/parser 不同，不横比；AIME24 新协议 90 题、旧协议 30 题，也不横比；
+- `r1_300_eval.json`（错误 merge）与 `r1_300_eval_hf.json` 并存，前者作废；
 - 只到 1.5B，不宣称规模外推。

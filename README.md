@@ -6,7 +6,7 @@
 >
 > 原始日志/图在父目录 `../`；完整报告见父目录 `项目一_最终报告.md`、`项目二_最终报告.md`；面试口径见 [docs/项目一_结果与面试口径.md](docs/项目一_结果与面试口径.md)、[docs/项目二_结果与面试口径.md](docs/项目二_结果与面试口径.md)。
 
-**一句话**：项目一用 GRPO + RFT 两个负结果说明“小预算下 on/off-policy 都不是瓶颈”；项目二用独立 judge 说明“**选择 vs 优化**是两种不同的 reward-hacking 风险”。
+**一句话**：项目一用 GRPO + RFT 两条尝试说明“小预算下换 on/off-policy 没有解决问题”（**不能反推主因是容量/数据**，单次训练 + 两套协议无法识别）；项目二用独立 judge 说明“**选择 vs 优化**是两种不同的 reward-hacking 风险”。
 
 ---
 
@@ -22,7 +22,7 @@
 | R1c | DAPO 5k | 600 | 未评测 | 未评测 | 未评测 | 29.43% |
 | MATH-R1 | MATH 7.4k | 300 | 3.33 / 6.67 | 5.00 / 16.67 | 72.65 / 80.40 | 74.20% |
 
-**结论**：没有一致提升；AIME24 +3.3pp 但 AIME25/MATH 反降，R1b 直接掉到 5%，R1c 600 步仍卡 ~30% train acc。定位为 **受控负结果**：1.5B + LoRA + 300–600 步的学习信号/预算不足。
+**结论**：没有一致提升；AIME24 +3.3pp 但 AIME25/MATH 反降，R1b 直接掉到 5%，R1c 600 步仍卡 ~30% train acc。定位为 **受控负结果**：已测试的 1.5B + LoRA + 300–600 步设置下未观察到跨评测集一致提升；主因（容量 / 数据分布 / reward 定义 / 有效 rollout 数 / 预算）待验证。
 
 > 逐 run 读法、耗时、日志映射：[evidence/p1_results.md](evidence/p1_results.md)；曲线：[evidence/p1_curves/](evidence/p1_curves/)；启动脚本：[scripts/p1/](scripts/p1/)。
 
@@ -35,7 +35,9 @@
 | AIME24 avg@8 | 9.49% | 9.77% | **+0.28pp** |
 | AIME25 avg@8 | 9.17% | 7.64% | **-1.53pp** |
 
-**结论**：变化都在 seed/题目噪声内；**on-policy（GRPO）和 offline（RFT）都没有可测提升**，瓶颈更可能是容量/数据/预算。详见 [evidence/rft_results.md](evidence/rft_results.md)。
+**结论**：变化都在 seed/题目噪声内；**GRPO（on-policy）与 RFT（offline）两条尝试都没有显示稳定提升**。但**不能**由此断言"瓶颈是容量/数据/预算"——单次训练、R1c 未评测、两套评测协议，无法识别唯一主因。详见 [evidence/rft_results.md](evidence/rft_results.md)。
+
+> 口径：上表 AIME24 为**新协议 90 题（AIME 2022–2024）**；项目一主表的 30 题 AIME24 是旧协议，两者不可横比。
 
 ### 项目二：RM / DPO / best-of-N
 

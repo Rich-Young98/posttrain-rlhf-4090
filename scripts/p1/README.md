@@ -1,7 +1,13 @@
 # 项目一：单卡 GRPO（verl v0.8 + vLLM 0.11 + LoRA）
 
 > 结果总表：[../../evidence/p1_results.md](../../evidence/p1_results.md)；一页面试口径：[../../docs/项目一_结果与面试口径.md](../../docs/项目一_结果与面试口径.md)。
-> 本目录的启动脚本是**按实跑日志里的 resolved config 重建**的（原始 launch 命令在 AutoDL 上，未入库）；参数与日志一致。
+> 本目录的启动脚本是**按实跑日志里的 resolved config 重建**的（原始 launch 命令在 AutoDL 上，未入库）。
+>
+> ⚠️ **2026-10-26 逐项核对结果**：脚本与实跑日志有 **4 处不一致**，照抄不能等同于复现原 run：
+> ① `use_shm`：脚本 True / 实跑 **False**；② `rollout.load_format`：脚本 `safetensors` / 实跑 **`dummy`**；
+> ③ `rollout.layered_summon`：脚本 True / 实跑 **False**；④ `trainer.seed=42`：**verl v0.8 没有这个字段**（照抄会报错），
+> 实跑里 `data.seed=None`（数据顺序未显式 seed），42 只是 `actor.data_loader_seed` / `fsdp_config.seed` 的默认值。
+> 逐字段对照见父目录 `p1/evidence/config_matrix.md`。下次重跑前请先按 Day 2 冻结版改这 4 处。
 
 ## 1. 环境
 
@@ -89,7 +95,9 @@ python scripts/eval/eval_math.py \
 | R1c | DAPO 5k | 600 | 1e-5 | 29.43% | 未评测 | 未评测 | 未评测 |
 | MATH-R1 | MATH 7.4k | 300 | 1e-5 | 74.20% | 3.33 / 6.67 | 5.00 / 16.67 | 72.65 / 80.40 |
 
-**结论**：加 lr 只增大 KL；加步数仍卡 ~30%；换 MATH 让 train acc 到 74% 但 eval 不涨；**没有一致提升**。
+**结论**：加 lr 只增大 KL；加步数仍卡 ~30%；换 MATH 让 train acc 到 74% 但 eval 不涨；**没有观察到跨评测集一致提升**（不能说"已证明瓶颈在容量/数据/预算"）。
+
+> 本表全部是**旧协议**（AIME24 = 2024-only 30 题，MATH-500 带 `\boxed{}` 指令、3072 tokens、无显式 eval seed）。RFT / base-v2 用的是新协议（**AIME24 = 90 题，2022–2024**、裸题面、2048 tokens、seeds 42/43/44），两套数字不可横比。
 
 ## 6. 常见坑
 
