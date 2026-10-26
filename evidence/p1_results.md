@@ -85,7 +85,24 @@
 | 启动脚本 / RFT | [../scripts/p1/](../scripts/p1/)、[../scripts/rft/](../scripts/rft/) |
 | 评测器 v2 | [../scripts/eval/eval_math.py](../scripts/eval/eval_math.py)、[summarize_eval.py](../scripts/eval/summarize_eval.py)、[paired_delta.py](../scripts/eval/paired_delta.py) |
 
-## 7. 限制（主动说）
+## 7. 诊断审计（Day 4，2026-10-26）
+
+> 证据包：父目录 `p1/evidence/audit/`（README + dedup/rollout/patch/trainlog JSON + 30 条退化样本复核）。
+
+| 审计项 | 结果 |
+|---|---|
+| 训练日志 group 级指标 | **没有记录** → 训练时零方差组比例无法回溯（只能估计） |
+| base rollout 零方差组（DAPO 150 题×8、MATH 60 题×8，T=1.0） | **DAPO 54%**（65 全错 / 16 全对）、**MATH 77%**（39 全对 / 7 全错）→ advantage 恒 0 的组过半 |
+| reward 路由补丁 | 无补丁：DAPO reward **0%**（98% `[INVALID]`）；补丁激活率 **97%**，救回 **28.0%**（=train acc 28.28%） |
+| 训练 reward vs 独立 oracle | 1200 条 rollout **0 分歧**（362 对 / 838 错）→ reward 定义没有系统性错判 |
+| 截断 | DAPO 0.08%、MATH 0% → 不是长度/截断问题 |
+| DAPO 去重链 | 1,791,700 → 17,917（index）→ 17,398（prompt）；**5k 训练集 = RNG(42).shuffle(clean)[:5000] 逐条命中** |
+| 去污染 | 13-gram 529 候选 → **14 条确认（全 MATH-500）**；只用 13-gram 会误删 515 条 |
+| 30 条退化样本 | 14 计算/代数失误、8 概念/公式误用、4 条件漏读、2 推理构造、1 题面解析、1 未化简；**无截断** |
+
+**诊断**：最硬的证据是"有效梯度样本太少"（零方差组 54%/77% × batch=4），叠加 LoRA 容量与 300–600 步预算；但单次训练、无 group 级日志、R1c 未评测 → **不能说是已证明的唯一主因**。
+
+## 8. 限制（主动说）
 
 - **单次训练、数据顺序未显式 seed**（`data.seed=None`；`trainer.seed` 在 verl v0.8 不存在）；本复评是"评测 3 seed"，不是"训练 3 seed"。
 - **R1c 未评测且产物缺失**（无 adapter/checkpoint）。
