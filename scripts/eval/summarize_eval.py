@@ -53,7 +53,18 @@ def main():
         name = os.path.basename(path)[: -len(".json")]
         res = json.load(open(path))
         bench = res.get("benchmark") or ("math500" if "math500" in name else ("aime25" if "aime25" in name else "aime24"))
-        runs.setdefault(name, {})[bench] = res
+        # group benchmarks of the same checkpoint under one key
+        key = name
+        for suffix in ("-math500", "-aime22-24", "-aime25"):
+            if key.endswith(suffix):
+                key = key[: -len(suffix)]
+                break
+        else:
+            if key == "base_math500_legacy":
+                key = "p1-base"
+            elif key == "p1-base-math500-bare":
+                key = "p1-base(prompt-ablation)"
+        runs.setdefault((key, res.get("prompt_mode", "")), {})[bench] = res
 
     lines = []
     header = ("| run | prompt | MATH-500 avg@4 | MATH-500 pass@4 | AIME22-24(90) avg@8 | "
@@ -61,9 +72,9 @@ def main():
     sep = "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|"
     lines += [header, sep]
     detail = []
-    for name, benches in sorted(runs.items()):
+    for (name, mode0), benches in sorted(runs.items()):
         cells = [name]
-        mode = ""
+        mode = mode0
         def fmt(bench, key, pct=True):
             r = benches.get(bench)
             if not r:
@@ -71,8 +82,6 @@ def main():
             a = r["aggregate"][key]
             return f"{a['mean']*100:.2f}±{a['std']*100:.2f}"
         m5 = benches.get("math500")
-        if m5:
-            mode = m5.get("prompt_mode", "")
         a90 = benches.get("aime24")
         a25 = benches.get("aime25")
         sub_avg = sub_pass = None
@@ -90,7 +99,7 @@ def main():
         cells.append(f"{pf['aggregate']['parse_fail_rate']['mean']*100:.2f}%" if pf else "—")
         cells.append(f"{pf['aggregate']['truncation_rate']['mean']*100:.2f}%" if pf else "—")
         lines.append("| " + " | ".join(cells) + " |")
-        detail.append((name, benches, sub_avg, sub_pass))
+        detail.append((name, mode, benches, sub_avg, sub_pass))
 
     text = "\n".join(lines)
     print(text)
@@ -100,9 +109,9 @@ def main():
         # also dump a machine-readable json next to the markdown
         out_json = args.out[:-3] + ".json" if args.out.endswith(".md") else args.out + ".json"
         payload = {}
-        for name, benches, sub_avg, sub_pass in detail:
-            payload[name] = {
-                "prompt_mode": (benches.get("math500") or {}).get("prompt_mode"),
+        for name, mode, benches, sub_avg, sub_pass in detail:
+            payload[name + ("@" + mode if mode else "")] = {
+                "prompt_mode": mode,
                 "math500": benches.get("math500", {}).get("aggregate"),
                 "aime22_24": benches.get("aime24", {}).get("aggregate"),
                 "aime2024_subset": ({"avg@n": {"mean": sub_avg[0], "std": sub_avg[1]},

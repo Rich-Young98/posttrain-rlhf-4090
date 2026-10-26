@@ -3,6 +3,8 @@
 > 数据：MATH train 7,414；base 对每题采 8 条，math_verify 过滤，保留 5,062（68.3%）；选最短正确回答做 LoRA SFT 1 epoch（317 步，loss 0.046），merge 后评测。
 > 评测：`eval_math.py`，MATH-500 n=4、AIME24 n=8，3 个采样 seed，报告 mean/std。
 > ⚠️ 这里的 **AIME24 是新协议 90 题（AIME 2022–2024）**，不是旧协议的 2024-only 30 题（见文末口径注）。
+>
+> **2026-10-26 统一复评（P1-UNIFIED，主口径）**：RFT MATH-500 **75.47±0.08 vs base 75.42±0.29**（+0.05pp，CI [−1.13,+1.27]）；AIME22–24(90) **9.35 vs 9.35**（0.00pp）；AIME25 **6.94 vs 10.56**（**−3.61pp，CI [−7.08,−0.56]，3 seed 全负**）。详见父目录 `p1/evidence/eval_unified/`。下面的 58.08→57.98 等数字是另一套（旧）评测，仅作历史。
 
 ## MATH-500
 

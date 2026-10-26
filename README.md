@@ -12,32 +12,22 @@
 
 ## 1. 结果速览
 
-### 项目一：GRPO（Qwen2.5-Math-1.5B + LoRA）
+### 项目一：GRPO（Qwen2.5-Math-1.5B + LoRA）— 统一复评（P1-UNIFIED）
 
-| run | 数据 | 步数 | AIME24 avg/pass | AIME25 avg/pass | MATH-500 avg/pass | train acc |
-|---|---|---:|---|---|---|---:|
-| base | — | 0 | 7.50 / 10.00 | 9.17 / 20.00 | 72.15 / 82.00 | — |
-| R1 | DAPO 5k | 300 | 10.83 / 13.33 | 7.50 / 16.67 | 71.35 / 83.00 | 28.28% |
-| R1b | DAPO 5k | 300 (lr 2e-5) | 5.00 / 10.00 | 10.00 / 20.00 | 71.65 / 83.40 | 27.99% |
-| R1c | DAPO 5k | 600 | 未评测 | 未评测 | 未评测 | 29.43% |
-| MATH-R1 | MATH 7.4k | 300 | 3.33 / 6.67 | 5.00 / 16.67 | 72.65 / 80.40 | 74.20% |
+> 同一评测器 / 同题 / 同解码 / 同 parser / 3 个 eval seed 重跑（2026-10-26）。旧 P1-LEGACY 数字只作历史，不与本表混比。
 
-**结论**：没有一致提升；AIME24 +3.3pp 但 AIME25/MATH 反降，R1b 直接掉到 5%，R1c 600 步仍卡 ~30% train acc。定位为 **受控负结果**：已测试的 1.5B + LoRA + 300–600 步设置下未观察到跨评测集一致提升；主因（容量 / 数据分布 / reward 定义 / 有效 rollout 数 / 预算）待验证。
+| run | 数据 | 步数 | MATH-500 avg@4 | AIME22–24(90) avg@8 | AIME2024(30 子集) avg@8 | AIME25(30) avg@8 | train acc |
+|---|---|---:|---:|---:|---:|---:|---:|
+| base | — | 0 | **75.42±0.29** | **9.35±0.29** | 10.56±0.86 | **10.56±0.52** | — |
+| R1 | DAPO 5k | 300 | 74.68±0.39 | 9.12±0.24 | 10.83±0.68 | 9.44±0.39 | 28.28% |
+| R1b | DAPO 5k | 300 (lr 2e-5) | 75.12±0.13 | 9.81±0.57 | 11.25±1.48 | 9.44±0.39 | 27.99% |
+| R1c | DAPO 5k | 600 | 未评测 | 未评测 | 未评测 | 未评测 | 29.43% |
+| MATH-R1 | MATH 7.4k | 300 | 75.38±0.57 | 9.17±0.41 | 11.67±0.68 | 10.42±1.23 | 74.20% |
+| RFT | MATH 7.4k → 5,062 | 317 SFT | **75.47±0.08** | 9.35±0.35 | 10.42±0.59 | **6.94±0.39** | — |
 
-> 逐 run 读法、耗时、日志映射：[evidence/p1_results.md](evidence/p1_results.md)；曲线：[evidence/p1_curves/](evidence/p1_curves/)；启动脚本：[scripts/p1/](scripts/p1/)。
+**结论**：没有任何方法带来稳定提升（MATH-500 全部在 base 的 −0.73 ~ +0.05pp；R1 的 −0.73pp CI 不含 0，即"略差"）。**旧结论"R1b AIME 崩到 5.00""MATH-R1 AIME 掉 4pp"在统一协议下消失**（9.81 / 9.17，AIME2024 子集 11.25 / 11.67）→ 旧值是单 seed 30 题噪声。RFT 的负效应只在 AIME25（−3.61pp，CI [−7.08, −0.56]）。主因（容量/数据/reward/有效 rollout/预算）仍是待验证假设，不是已证明结论。
 
-### 项目一补充：RFT / expert iteration（负结果）
-
-| 指标 | base | RFT | Δ |
-|---|---:|---:|---:|
-| MATH-500 avg@4 | 58.08% | 57.98% | **-0.10pp** |
-| MATH-500 pass@4 | 66.47% | 65.47% | **-1.00pp** |
-| AIME24 avg@8 | 9.49% | 9.77% | **+0.28pp** |
-| AIME25 avg@8 | 9.17% | 7.64% | **-1.53pp** |
-
-**结论**：变化都在 seed/题目噪声内；**GRPO（on-policy）与 RFT（offline）两条尝试都没有显示稳定提升**。但**不能**由此断言"瓶颈是容量/数据/预算"——单次训练、R1c 未评测、两套评测协议，无法识别唯一主因。详见 [evidence/rft_results.md](evidence/rft_results.md)。
-
-> 口径：上表 AIME24 为**新协议 90 题（AIME 2022–2024）**；项目一主表的 30 题 AIME24 是旧协议，两者不可横比。
+> 逐 run 读法、delta、逐题 jsonl：[p1/evidence 的 eval_unified](../p1/evidence/eval_unified/README.md)；证据页：[evidence/p1_results.md](evidence/p1_results.md)；曲线：[evidence/p1_curves/](evidence/p1_curves/)；启动脚本：[scripts/p1/](scripts/p1/)；评测器：[scripts/eval/](scripts/eval/)。
 
 ### 项目二：RM / DPO / best-of-N
 
