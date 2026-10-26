@@ -44,7 +44,23 @@ MODE=math STEPS=300 LR=1e-5 EXP=p1-math-r1-300 bash scripts/p1/run_grpo.sh
 
 关键超参（与日志一致）：`train_batch_size=4`、`rollout.n=8`、`max_prompt_length=1024`、
 `max_response_length=3072`、LoRA rank/alpha=32、`all-linear`、KL loss 0.001、`token-mean`、
-`gpu_memory_utilization=0.45`、单卡 FSDP、seed 42。
+`gpu_memory_utilization=0.45`、单卡 FSDP。
+
+**seed 说明（2026-10-26 修正）**：脚本不再传不存在的 `trainer.seed=42`，改为显式
+`data.seed` / `actor.data_loader_seed` / `actor.fsdp_config.seed`（默认 42）。这**不等于**完整确定性；
+见 `../../evidence/p1_results.md` §1 与父目录 `p1/evidence/config_matrix.md`。
+
+### 2.1 长程 run / 两个 checkpoint（R1c 重跑）
+
+```bash
+# 600 步，step300 和 step600 各存一个 ckpt（max_actor_ckpt_to_keep=2）
+MODE=dapo STEPS=600 SAVE_FREQ=300 DATA_SEED=42 LR=1e-5 \
+  EXP=p1-r1c-rerun-600 bash scripts/p1/run_grpo.sh
+```
+
+脚本支持 `SAVE_FREQ`、`DATA_SEED`、`KEEP_CKPT`，并在运行前把 commit / 补丁 sha / model+data hash /
+版本 / GPU / 磁盘写入 `logs/${EXP}_manifest.txt`。注意 verl 在训练结束时会**强制保存 final checkpoint**
+（即使 `save_freq` 大于步数），长 run 要预留 2 份 ckpt 的磁盘。
 
 ## 3. 合并 LoRA（必须做对）
 
