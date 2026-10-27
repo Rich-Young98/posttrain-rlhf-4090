@@ -42,4 +42,4 @@
 - **原 R1c**：checkpoint/adapter 丢失，仍标 `missing_artifact / 未评测`；2026-10-26 另起新轨迹 `p1-r1c-rerun-600` 并评测 step300/600（新 run，不是"补评原 R1c"）。
 - 原始逐 pair judge JSON：v1 三份 + v2 多 judge JSON 已拉回本地 `p2/judge_v2/`（并入本地归档 `autodl_archive_20261027` 的可选增量）；本 repo 只放汇总与 CSV。
 - 项目一旧协议原始评测 JSON 已从远端拉回父目录 `p1/artifacts/raw_eval/`（含 sha256）；repo 只放汇总。
-- 项目一 300 步 DPO 的人工复核未做（800 有完整 20 条）。
+- 项目一 300 步 DPO 的人工复核未做（800 有完整 20 条）；项目二**人工盲评明确放弃**（2026-10-28 时间取舍）：90/150 对盲评表 + 分析脚本已生成但未标注，证据页/报告写为局限。

@@ -87,12 +87,12 @@
 
 ## 局限（写报告/面试主动说）
 
-- **人工校准未完成**：150 对盲评表已生成（`p2/human_150.md/csv`），双评按计划暂停；人-judge 一致率/κ 还没有。
+- **人工校准明确放弃（2026-10-28，时间取舍）**：90/150 对盲评表 + 分析脚本已生成（`p2/human_90_blind.csv`、`p2/human_150_blind.csv`、`analyze_human.py`），但未标注 → 没有人-judge 一致率/κ；面试口径写“用 5 judge 交叉 + κ 量化 judge 噪声替代，人工是下一步”。
 - **OpenAI judge 没跑成**：本机与 AutoDL 都连不上 `api.openai.com`（网络超时，无代理）。
 - **Mistral 7B 是较弱 judge**：它对 DPO800 给出 61.8%（唯一显著为正），且严格匹配子集 49.5%，更像“长度/格式偏好不稳定”；只作敏感性检查，不当主判据。
 - **ties 比例差异大**（Qwen 默认 44% vs Qwen-CF 10%）说明 judge 的“平手阈值”不同；excl-ties 口径对 ties 处理敏感，已同时保留 incl-ties 字段。
 - **9 个 seed×judge 格子里仍有 1 个显著负**（DeepSeek seed43），所以不能反过来说“已证明 DPO800 有效”；正确表述是“没有稳健方向”。
-- 没有人工大样本、没有 72B 级 judge、没有 BoN 采样 seed。
+- 没有人工大样本（明确放弃）、没有 72B 级 judge、没有 BoN 采样 seed。
 
 ## 文件
 
