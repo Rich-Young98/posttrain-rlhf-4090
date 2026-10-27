@@ -5,6 +5,10 @@
 > 2. **项目二（RLHF）**：1.5B RM + 自定义 DPO + best-of-N；用 **5-judge 交叉复评**发现 DPO800 的“负结果”是 200 对 + 单 judge 的假象：DeepSeek 566 对 **47.5%**（200 对时 40.9%）、GLM 53.0%、Qwen 48.4%、Qwen-CF 49.4%、Mistral 61.8%——4/5 CI 跨 50、无显著负，长度匹配后 49.5–64.7%；同时确认 best-of-N **选择**在 5 个 judge 上稳定有效（63.8–71.2%）。
 >
 > 原始日志/图在父目录 `../`；完整报告见父目录 `项目一_最终报告.md`、`项目二_最终报告.md`；面试口径见 [docs/项目一_结果与面试口径.md](docs/项目一_结果与面试口径.md)、[docs/项目二_结果与面试口径.md](docs/项目二_结果与面试口径.md)。
+>
+> **上游贡献**：单卡 24G GRPO + LoRA 示例已提给 verl 上游——[PR #8405](https://github.com/verl-project/verl/pull/8405)（open）；背景与 sampler 候选见 [docs/verl_pr.md](docs/verl_pr.md)。
+>
+> **状态（2026-10-28）**：两个项目冻结；AutoDL 实例已关机；证据（日志/评测 JSON/checkpoint/归档）已本地保存，repo 只放汇总与可复现脚本。
 
 **一句话**：项目一用 GRPO + RFT 两条尝试说明“小预算下换 on/off-policy 没有解决问题”（**不能反推主因是容量/数据**，单次训练 + 两套协议无法识别）；项目二用独立 judge 说明“**选择 vs 优化**是两种不同的 reward-hacking 风险”。
 
