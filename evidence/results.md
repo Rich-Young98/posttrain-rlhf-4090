@@ -60,7 +60,17 @@
 | 平均长度 | +5.5% | **+31.4%** |
 | 人工 20 条 | 未做 | 4–5 更好 / **8 更差** / 8 差不多 |
 
-**读法**：DPO300 与 base 平手；DPO800 **显著更差**。RM proxy 高估 **26.6pp**，是长度/风格 shortcut。DPO 是负结果，不是"对齐成功"。
+**读法（v1 单 judge）**：DPO300 与 base 平手；DPO800 在 DeepSeek 单 judge 下 40.9%。**v2 多 judge 复核改写了结论**：
+
+| judge | n（有效） | ties | DPO800 胜率 | 95% CI | 长度差 ±10 匹配 |
+|---|---:|---:|---:|---|---:|
+| DeepSeek（v1，200 对） | 171 | 29 | 40.94% | [33.8, 48.4] | 60.5% |
+| GLM-4.5-air（566 对） | 423 | 143 | 52.96% | [48.2, 57.7] | 55.3% |
+| Qwen2.5-7B（566 对） | 316 | 250 | 48.42% | [43.0, 53.9] | 64.7% |
+| Qwen-CF（566 对） | 508 | 58 | 49.41% | [45.1, 53.7] | 55.5% |
+| Mistral-7B（566 对） | 356 | 210 | 61.80% | [56.6, 66.7] | 49.5% |
+
+**v2 读法**：5 个 judge 从 40.9% 到 61.8%，方向不一致；同一 200 对子集上 GLM 48.0%、Qwen 46.4%，换 judge 就不显著；严格 ±10 词匹配后 49.5–64.7%（不再差）。→ **DPO800 的负效应 judge-dependent、主要由长度驱动；“显著更差”只在 DeepSeek 上成立。** RM proxy 67.5% 仍高估（15–19pp），但幅度小于 v1 的 26.6pp。详见 [judge_results_v2.md](judge_results_v2.md)。
 
 ### best-of-N
 
@@ -71,16 +81,16 @@
 | 64 | +1.453 | +0.942 | 159.4 |
 | 128 | **+1.808** | **+1.256** | **161.9** |
 
-**读法**：N=1..128 proxy/gold 同向上升，长度 +12.7%，长度相同 pair 的 gold 仍 +2.97；**未观察到经典过优化拐点**（negative result）。但同一批选中回答在独立 judge 下 **N=64 65.5%、N=128 66.7%**，similar 桶约 66%——**“选择”本身是正结果**。held-out gold RM 与 proxy 同偏置，不能当独立 judge。
+**读法**：N=1..128 proxy/gold 同向上升，长度 +12.7%，长度相同 pair 的 gold 仍 +2.97；**未观察到经典过优化拐点**（negative result）。5 个 judge 下 **N=64 63.9–74.6%、N=128 64.3–79.0%**（CI 下界均 >57%），严格长度匹配后仍 >54%——**“选择”本身是正结果**，且多 judge 复现。held-out gold RM 与 proxy 同偏置，不能当独立 judge。
 
 ## 一句话
 
-> 同一套 1.5B/24G 预算：项目一 GRPO + RFT 都是受控负结果；项目二 RM 有长度偏置、DPO 被独立 judge 证伪（40.9%）、best-of-N 选择有效（65.5/66.7%）。**选择 vs 优化，是两种不同的 reward-hacking 风险。**
+> 同一套 1.5B/24G 预算：项目一 GRPO + RFT 都是受控负结果；项目二 RM 有长度偏置、DPO 在多 judge 下方向不一致（DeepSeek 40.9%、GLM 53.0%、Qwen 48.4%、Mistral 61.8%，长度匹配后不差）、best-of-N 选择在 5 个 judge 上稳定有效（64–79%）。**选择有效、优化方向不稳、单 judge 不可靠。**
 
 ## 证据索引
 
 - 每个 run 的数字 → [run_index.csv](run_index.csv)
-- judge 方法/CI/长度桶 → [judge_results.md](judge_results.md)
+- judge v1（单 judge）→ [judge_results.md](judge_results.md)；**多 judge v2** → [judge_results_v2.md](judge_results_v2.md) / [judge_summary_v2.csv](judge_summary_v2.csv)
 - RFT → [rft_results.md](rft_results.md)
 - DPO 生成评测原始汇总 → [dpo_eval_200.json](dpo_eval_200.json)
 - best-of-N 曲线原始汇总 → [bon_summary.json](bon_summary.json)

@@ -1,3 +1,6 @@
+> ⚠️ **本页是 v1（单 judge，DeepSeek）历史记录**。2026-10-27 已补 5 judge × 566 对复核：[judge_results_v2.md](judge_results_v2.md)。
+> v1 的“DPO800 显著差于 base”**已被 v2 降级为 judge-dependent + 长度驱动**（GLM 53.0%、Qwen 48.4%、Mistral 61.8%；长度匹配 ±10 后 49.5–64.7%）。下图/v1 数字仅作历史对照。
+
 # 独立 judge 结果（2026-10-25，DeepSeek pairwise）
 
 > 口径：DPO n=200；BoN N=64 / N=128 各 89 对。A/B 位置交换 + 3 票多数；胜率 = b / (a + b)，**ties 不计入分母**；CI 为 Wilson 95%。

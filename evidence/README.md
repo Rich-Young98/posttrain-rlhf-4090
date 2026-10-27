@@ -17,7 +17,9 @@
 | `archive_20261027.md` | 本地 AutoDL 全量归档说明（27.41 GiB：logs/results/checkpoints/adapters/runs/data/scripts） | 2026-10-27 复制 |
 | `archive_manifest_20261027.csv` | 归档文件清单（216 行，含 sha256/大小/类别） | 同上 |
 | `p1_curves/` | 项目一曲线（R1、R1 vs R1b、R1 家族、MATH-R1、**R1c 重跑 600 步**） | 父目录/本次 run |
-| `judge_results.md` | 独立 judge 方法、CI、长度桶、局限 | DeepSeek pairwise 运行汇总 |
+| `judge_results.md` | 独立 judge **v1**（DeepSeek 单 judge）方法、CI、长度桶 | 2026-10-25 运行汇总 |
+| `judge_results_v2.md` | **多 judge v2**（5 judge × 566 对）：主表、一致性 κ、长度匹配、改写后的结论 | 2026-10-27 |
+| `judge_summary_v2.csv` | v2 机器可读表（25 行，逐 judge × 实验） | 同上 |
 | `judge_summary.csv` | judge 逐组 `a/b/ties/win_rate/CI` | 同上 |
 | `rft_results.md` | RFT 的 MATH-500/AIME 对比（3 seed） | `rft-merged_*.json` |
 | `dpo_eval_200.json` | DPO 800 vs base 的 RM proxy 评测原始汇总（含长度桶） | `p2/dpo_eval_200.json` |
@@ -37,6 +39,6 @@
 ## 缺失件（已声明，不伪造）
 
 - **原 R1c**：checkpoint/adapter 丢失，仍标 `missing_artifact / 未评测`；2026-10-26 另起新轨迹 `p1-r1c-rerun-600` 并评测 step300/600（新 run，不是"补评原 R1c"）。
-- 原始逐 pair judge JSON（`dpo300_judge.json`、`dpo800_judge.json`、`bon_judge.json`）在 AutoDL 实例上，关机后未拉回；本目录保留逐组汇总。
+- 原始逐 pair judge JSON：v1 三份 + v2 多 judge JSON 已拉回本地 `p2/judge_v2/`（并入本地归档 `autodl_archive_20261027` 的可选增量）；本 repo 只放汇总与 CSV。
 - 项目一旧协议原始评测 JSON 已从远端拉回父目录 `p1/artifacts/raw_eval/`（含 sha256）；repo 只放汇总。
 - 项目一 300 步 DPO 的人工复核未做（800 有完整 20 条）。
