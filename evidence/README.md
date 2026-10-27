@@ -20,7 +20,7 @@
 | `judge_results.md` | 独立 judge **v1**（DeepSeek 单 judge）方法、CI、长度桶 | 2026-10-25 运行汇总 |
 | `judge_results_v2.md` | **多 judge v2**（5 judge × 566 对）：主表、一致性 κ、长度匹配、改写后的结论 | 2026-10-27 |
 | `judge_summary_v2.csv` | v2 机器可读表（20 行，逐 judge × 实验，去重后取最大样本） | 同上 |
-| `multi_seed_dpo800.csv` | DPO800 多 seed（42/43/44）× 双 judge（Qwen/GLM）胜率与 CI | 2026-10-27 |
+| `multi_seed_dpo800.csv` | DPO800 多 seed（42/43/44）× 三 judge（Qwen/GLM/DeepSeek）胜率与 CI | 2026-10-27 |
 | `judge_summary.csv` | judge 逐组 `a/b/ties/win_rate/CI` | 同上 |
 | `rft_results.md` | RFT 的 MATH-500/AIME 对比（3 seed） | `rft-merged_*.json` |
 | `dpo_eval_200.json` | DPO 800 vs base 的 RM proxy 评测原始汇总（含长度桶） | `p2/dpo_eval_200.json` |

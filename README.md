@@ -2,7 +2,7 @@
 
 > **两个项目，一套受控诊断方法：**
 > 1. **项目一（RLVR）**：单卡 24G 上用 verl + vLLM colocate + LoRA 跑 GRPO，再做 RFT（expert iteration）；两个方向都得到**可复现负结果**，并有完整工程/数据/评测管线。
-> 2. **项目二（RLHF）**：1.5B RM + 自定义 DPO + best-of-N；用 **5-judge 交叉复评**发现 DPO800 的“负结果”是 judge-dependent（DeepSeek 40.9%、GLM 53.0%、Qwen 48.4%、Mistral 61.8%，长度匹配后 49.5–64.7%），同时确认 best-of-N **选择**在 5 个 judge 上稳定有效（64–79%）。
+> 2. **项目二（RLHF）**：1.5B RM + 自定义 DPO + best-of-N；用 **5-judge 交叉复评**发现 DPO800 的“负结果”是 200 对 + 单 judge 的假象：DeepSeek 566 对 **47.5%**（200 对时 40.9%）、GLM 53.0%、Qwen 48.4%、Qwen-CF 49.4%、Mistral 61.8%——4/5 CI 跨 50、无显著负，长度匹配后 49.5–64.7%；同时确认 best-of-N **选择**在 5 个 judge 上稳定有效（63.8–71.2%）。
 >
 > 原始日志/图在父目录 `../`；完整报告见父目录 `项目一_最终报告.md`、`项目二_最终报告.md`；面试口径见 [docs/项目一_结果与面试口径.md](docs/项目一_结果与面试口径.md)、[docs/项目二_结果与面试口径.md](docs/项目二_结果与面试口径.md)。
 
@@ -37,7 +37,7 @@
 |---|---|---|
 | RM | RewardBench 全量 **79.23%**；UF holdout 95.0%；length-only 35.58%；长度匹配 87.6% | 真实质量信号 + 强长度偏置 |
 | 长度偏置 | chosen 更短 **56.6%**、更长 **99.1%**；Pearson **0.43** | "质量 + 长度 shortcut" 并存 |
-| DPO 800 | RM proxy **67.5%**；独立 judge **40.9%（DeepSeek）/ 48–62%（GLM/Qwen/Mistral）**；长度 **+31.4%**；长度匹配 ±10 词 **49.5–64.7%** | **judge-dependent + 长度驱动**；proxy 仍高估 |
+| DPO 800 | RM proxy **67.5%**；独立 judge（566 对）**47.5%（DeepSeek）/ 53.0%（GLM）/ 48.4%（Qwen）/ 49.4%（Qwen-CF）/ 61.8%（Mistral）**；长度 **+31.4%**；长度匹配 ±10 词 **49.5–64.7%** | **无稳健方向（4/5 跨 50）+ 长度驱动**；v1“显著更差”撤回 |
 | DPO 300 | RM proxy 62.0%；独立 judge **51.0–54.7%**（5 judge 全平手）；长度 +5.5% | 与 base 无显著差异 |
 | best-of-N 过优化 | N=1→128 proxy/gold 均上升；N=64→128 gold +0.31；长度 +12.7% | 未复现过优化（negative） |
 | best-of-N 选择 | 独立 judge N=64/128 = **65.5%/66.7%**；similar 约 66% | **选择有效（正结果）** |
