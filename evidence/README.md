@@ -15,7 +15,7 @@
 | `config_matrix.md` | 4 个历史 run 的 resolved config vs repo 脚本逐字段对照 | 父目录 `p1/evidence/` |
 | `artifact_inventory.csv` | 文件级清单（路径/sha256/大小/是否含原始 completion/缺失件） | 父目录 `p1/evidence/` |
 | `archive_20261027.md` | 本地 AutoDL 全量归档说明（27.41 GiB：logs/results/checkpoints/adapters/runs/data/scripts） | 2026-10-27 复制 |
-| `archive_manifest_20261027.csv` | 归档文件清单（209 行，含 sha256/大小/类别） | 同上 |
+| `archive_manifest_20261027.csv` | 归档文件清单（216 行，含 sha256/大小/类别） | 同上 |
 | `p1_curves/` | 项目一曲线（R1、R1 vs R1b、R1 家族、MATH-R1、**R1c 重跑 600 步**） | 父目录/本次 run |
 | `judge_results.md` | 独立 judge 方法、CI、长度桶、局限 | DeepSeek pairwise 运行汇总 |
 | `judge_summary.csv` | judge 逐组 `a/b/ties/win_rate/CI` | 同上 |
